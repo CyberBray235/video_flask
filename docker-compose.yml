@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  api:
+    build:
+      context: ./api
+    ports:
+      - "5000:5000"
+
+  server:
+    build:
+      context: ./server
+    ports:
+      - "5001:5001"
+    depends_on:
+      - api
+

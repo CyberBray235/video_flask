@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un film</title>
+</head>
+<body>
+    <h1>Ajouter un film</h1>
+    <form method="POST" enctype="multipart/form-data">
+    	ID: <input type="number" name="id" required><br>
+    	Titre: <input type="text" name="title" required><br>
+    	Réalisateur: <input type="text" name="director" required><br>
+    	Année: <input type="number" name="year" required><br>
+    	Image: <input type="file" name="image" accept="image/*"><br>
+    	Vidéo: <input type="file" name="video" accept="video/*"><br>
+    	<button type="submit">Ajouter</button>
+    </form>
+
+    <a href="/">Retour à l'accueil</a>
+</body>
+</html>

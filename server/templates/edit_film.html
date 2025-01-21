@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier un film</title>
+</head>
+<body>
+    <h1>Modifier un film</h1>
+    <form method="POST" enctype="multipart/form-data">
+        Titre: <input type="text" name="title" value="{{ film.title }}" required><br>
+        Réalisateur: <input type="text" name="director" value="{{ film.director }}" required><br>
+        Année: <input type="number" name="year" value="{{ film.year }}" required><br>
+        Image: <input type="file" name="image" accept="image/*"><br>
+        Vidéo: <input type="file" name="video" accept="video/*"><br>
+        <button type="submit">Modifier</button>
+    </form>
+    <a href="/films">Retour à la liste des films</a>
+</body>
+</html>
