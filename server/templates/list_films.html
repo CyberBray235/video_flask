@@ -1,29 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des films</title>
-</head>
-<body>
-    <h1>Liste des films</h1>
-    <ul>
-        {% for film in films %}
-            <li>
-                <strong>{{ film.title }}</strong> ({{ film.year }}) - Réalisé par {{ film.director }}
-                {% if film.image %}
-                    <br><img src="{{ url_for('uploaded_file', filename=film.image) }}" alt="Image de {{ film.title }}" style="width:100px;">
-                {% endif %}
-                {% if film.video %}
-                    <br><video src="{{ url_for('uploaded_file', filename=film.video) }}" controls style="width:200px;"></video>
-                {% endif %}
-                <br>
-                <a href="/films/{{ film.id }}/edit">Modifier</a> |
-                <form action="/films/{{ film.id }}/delete" method="POST" style="display:inline;">
-                    <button type="submit">Supprimer</button>
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Liste des films</h1>
+<div class="row">
+    {% for film in films %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if film.poster_path %}
+            <img src="https://image.tmdb.org/t/p/w500{{ film.poster_path }}" class="card-img-top" alt="{{ film.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ film.title }}</h5>
+                <p class="card-text">{{ film.overview }}</p>
+                <a href="{{ url_for('film_details', film_id=film.id) }}" class="btn btn-primary">Voir les détails</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for film in custom_films %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if film.poster_path %}
+            <img src="{{ film.poster_path }}" class="card-img-top" alt="{{ film.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ film.title }}</h5>
+                <p class="card-text">{{ film.overview }}</p>
+                <a href="{{ url_for('edit_film', film_id=film._id) }}" class="btn btn-primary">Modifier</a>
+                <form action="{{ url_for('delete_film', film_id=film._id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce film?')">Supprimer</button>
                 </form>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="/films/add">Ajouter un film</a>
-</body>
-</html>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

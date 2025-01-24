@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %
+<body>
+    <h1>Bienvenue à la vidéothèque</h1>
+    <a href="/films">Voir les films</a> |
+    <a href="/films/add">Ajouter un film</a>
+</body>
+</html>
+{% endblock %}

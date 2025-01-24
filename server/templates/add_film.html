@@ -1,21 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un film</title>
-</head>
-<body>
-    <h1>Ajouter un film</h1>
-    <form method="POST" enctype="multipart/form-data">
-    	ID: <input type="number" name="id" required><br>
-    	Titre: <input type="text" name="title" required><br>
-    	Réalisateur: <input type="text" name="director" required><br>
-    	Année: <input type="number" name="year" required><br>
-    	Image: <input type="file" name="image" accept="image/*"><br>
-    	Vidéo: <input type="file" name="video" accept="video/*"><br>
-    	<button type="submit">Ajouter</button>
-    </form>
+{% extends "base.html" %}
 
-    <a href="/">Retour à l'accueil</a>
-</body>
-</html>
+{% block content %}
+<h1>Ajouter un film</h1>
+<form method="POST">
+    <div class="form-group">
+        <label for="title">Titre</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="form-group">
+        <label for="director">Réalisateur</label>
+        <input type="text" class="form-control" id="director" name="director" required>
+    </div>
+    <div class="form-group">
+        <label for="year">Année</label>
+        <input type="number" class="form-control" id="year" name="year" required>
+    </div>
+    <div class="form-group">
+        <label for="overview">Description</label>
+        <textarea class="form-control" id="overview" name="overview" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="poster_path">URL de l'affiche</label>
+        <input type="text" class="form-control" id="poster_path" name="poster_path" required>
+    </div>
+    <button type="submit" class="btn btn-success">Ajouter</button>
+</form>
+{% endblock %}

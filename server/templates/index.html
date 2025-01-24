@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Accueil</title>
-</head>
+{% extends "base.html" %}
+
+{% block content %}
 <body>
     <h1>Bienvenue à la vidéothèque</h1>
-    <a href="/films">Voir les films</a> |
-    <a href="/films/add">Ajouter un film</a>
+    <a href="{{ url_for('list_films') }}" class="btn btn-primary btn-lg">Voir les films</a>
+    <a href="{{ url_for('add_film') }}" class="btn btn-success btn-lg">Ajouter un film</a>
 </body>
-</html>
+{% endblock %}

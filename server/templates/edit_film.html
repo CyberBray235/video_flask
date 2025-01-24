@@ -1,19 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Modifier un film</title>
-</head>
-<body>
-    <h1>Modifier un film</h1>
-    <form method="POST" enctype="multipart/form-data">
-        Titre: <input type="text" name="title" value="{{ film.title }}" required><br>
-        Réalisateur: <input type="text" name="director" value="{{ film.director }}" required><br>
-        Année: <input type="number" name="year" value="{{ film.year }}" required><br>
-        Image: <input type="file" name="image" accept="image/*"><br>
-        Vidéo: <input type="file" name="video" accept="video/*"><br>
-        <button type="submit">Modifier</button>
-    </form>
-    <a href="/films">Retour à la liste des films</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Modifier le film</h1>
+<form action="{{ url_for('edit_film', film_id=film._id) }}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="title">Titre</label>
+        <input type="text" class="form-control" id="title" name="title" value="{{ film.title }}" required>
+    </div>
+    <div class="form-group">
+        <label for="director">Réalisateur</label>
+        <input type="text" class="form-control" id="director" name="director" value="{{ film.director }}" required>
+    </div>
+    <div class="form-group">
+        <label for="year">Année</label>
+        <input type="number" class="form-control" id="year" name="year" value="{{ film.year }}" required>
+    </div>
+    <div class="form-group">
+        <label for="overview">Résumé</label>
+        <textarea class="form-control" id="overview" name="overview" required>{{ film.overview }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="poster_path">Chemin de l'affiche</label>
+        <input type="text" class="form-control" id="poster_path" name="poster_path" value="{{ film.poster_path }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
+{% endblock %}
