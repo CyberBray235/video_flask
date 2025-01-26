@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Modifier l'utilisateur</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="username" class="form-label">Nom d'utilisateur</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="role" class="form-label">Rôle</label>
+            <select class="form-control" id="role" name="role" required>
+                <option value="user" {% if user.role == 'user' %}selected{% endif %}>Utilisateur</option>
+                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier</button>
+    </form>
+</div>
+{% endblock %}

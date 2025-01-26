@@ -98,9 +98,10 @@ def admin():
     if current_user.role != 'admin':
         flash('Soyez admin pour accéder à cette page')
         return redirect(url_for('index'))
+    users = list(mongo.db.users.find())
     rentals = list(mongo.db.rentals.find({"validated": {"$ne": True}}))
     films = list(mongo.db.films.find({"validated": {"$ne": True}}))
-    return render_template('admin.html', rentals=rentals, films=films)
+    return render_template('admin.html',users=users, rentals=rentals, films=films)
 
 
 
@@ -120,6 +121,44 @@ def register():
         flash('Inscription Réussie. Veuillez vous connecter')
         return redirect(url_for('login'))
     return render_template('register.html')
+
+
+#On veut que l'admin puisse sup ou modifier un user
+
+@app.route('/admin/delete_user/<user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if current_user.role != 'admin':
+        #On verifie si l'user est admin
+        flash('Accès non autorisé')
+        return redirect(url_for('index'))
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    if user:
+        mongo.db.users.delete_one({"_id": ObjectId(user_id)})
+        flash('Utilisateur supprimé avec succès')
+    else:
+        flash('Utilisateur introuvable')
+    return redirect(url_for('admin'))
+
+@app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    if current_user.role != 'admin':
+        flash('Accès non autorisé')
+        return redirect(url_for('index'))
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        flash('Utilisateur introuvable')
+        return redirect(url_for('admin')) #On redirige vers la page admin
+
+    if request.method == 'POST':
+        username = request.form['username']
+        role = request.form['role']
+        mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"username": username, "role": role}})
+        flash('Utilisateur modifié avec succès')
+        return redirect(url_for('admin'))
+
+    return render_template('edit_user.html', user=user)
 
 
 @app.route('/films', methods=['GET'])

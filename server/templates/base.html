@@ -7,13 +7,30 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #799aba;
+        }
+        .navbar {
+            margin-bottom: 20px;
         }
         .jumbotron {
             background-color: #343a40;
             color: white;
             padding: 2rem 1rem;
             border-radius: 0.3rem;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -72,7 +89,11 @@
 
         {% block content %}{% endblock %}
     </div>
-
+    <footer class="footer text-center">
+        <div class="container">
+            <p>Nous avons réalisé ce projet pour un TP</p>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
