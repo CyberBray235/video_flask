@@ -17,19 +17,37 @@ app.secret_key = 'Tchad'
 app.config["MONGO_URI"] = "mongodb://mongo:27017/videotheque"
 mongo = PyMongo(app)
 
-UPLOAD_FOLDER = "data/uploads"
-IMAGE_FOLDER = os.path.join(UPLOAD_FOLDER, 'images')
-VIDEO_FOLDER = os.path.join(UPLOAD_FOLDER, 'videos')
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-os.makedirs(IMAGE_FOLDER, exist_ok=True)
-os.makedirs(VIDEO_FOLDER, exist_ok=True)
 
 API_URL = "http://api.themoviedb.org/3"
 API_KEY = '85131cf920a86abc462f9c01288d3925'
+
+
+
+@app.route('/api/films', methods=['GET'])
+def get_films():
+    films = list(mongo.db.films.find())
+    for film in films:
+        film['_id'] = str(film['_id'])
+    return jsonify(films)
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    existing_user = User.check_by_username(username, mongo)
+    if existing_user:
+        return jsonify({"message": "Nom d'utilisateur déjà pris. Veuillez en choisir un autre."}), 409
+    role = 'admin' if username == 'admin' else 'user'
+    user = User(None, username, None, role)
+    user.set_password(password)
+    mongo.db.users.insert_one({'username': username, 'password': user.password, 'role': role})
+    return jsonify({"message": "Inscription Réussie. Veuillez vous connecter"}), 201
+
 
 @app.route('/')
 def index():
@@ -51,6 +69,7 @@ def login():
             return redirect(url_for('list_films'))
         flash('Nom d\'utilisateur ou mot de passe invalide')
     return render_template('login.html')
+
 
 @app.route('/logout')
 @login_required
@@ -104,7 +123,7 @@ def admin():
     return render_template('admin.html',users=users, rentals=rentals, films=films)
 
 
-
+"""
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -121,6 +140,7 @@ def register():
         flash('Inscription Réussie. Veuillez vous connecter')
         return redirect(url_for('login'))
     return render_template('register.html')
+"""
 
 
 #On veut que l'admin puisse sup ou modifier un user
@@ -161,29 +181,6 @@ def edit_user(user_id):
     return render_template('edit_user.html', user=user)
 
 
-@app.route('/films', methods=['GET'])
-@login_required
-def list_films():
-    sort_by = request.args.get('sort_by', 'popularity.desc')
-    print(f"Trie par: {sort_by}")
-    response = requests.get(f'{API_URL}/discover/movie', params={'api_key': API_KEY, 'sort_by': sort_by})
-    films = response.json().get('results', [])
-
-    #Consilliation des films de l'API avec les films de la base de données
-    for film in films:
-        if not mongo.db.films.find_one({"tmdb_id": film['id']}):
-            mongo.db.films.insert_one({
-                "tmdb_id": film['id'],
-                "title": film['title'],
-                "overview": film['overview'],
-                "poster_path": f"https://image.tmdb.org/t/p/w500{film['poster_path']}" if film['poster_path'] else None,
-                "release_date": film.get('release_date', 'Date inconnue')
-            })
-    custom_films = list(mongo.db.films.find())
-    for film in custom_films:
-        film['_id'] = str(film['_id'])
-        film['id'] = film['_id']
-    return render_template('list_films.html', films=custom_films, sort_by=sort_by)
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
@@ -266,23 +263,12 @@ def add_film():
             "overview": request.form['overview'],
             "poster_path": request.form['poster_path']
         }
-        if 'image' in request.files:
-            image = request.files['image']
-            image_path = os.path.join(IMAGE_FOLDER, image.filename)
-            image.save(image_path)
-            new_film["image"] = os.path.join('uploads', 'images', image.filename)
-
-        if 'video' in request.files:
-            video = request.files['video']
-            video_path = os.path.join(VIDEO_FOLDER, video.filename)
-            video.save(video_path)
-            new_film["video"] = os.path.join('uploads', 'videos', video.filename)
 
         result = mongo.db.films.insert_one(new_film)
         new_film['_id'] = str(result.inserted_id)  # Ajoutez cette ligne pour obtenir l'ID généré
         return redirect(url_for('list_films'))
     return render_template('add_film.html')
-
+"""
 @app.route('/films/<film_id>', methods=['GET'])
 @login_required
 def film_details(film_id):
@@ -294,6 +280,17 @@ def film_details(film_id):
     else:
         flash('Pas de details pour ce film')
         return redirect(url_for('list_films'))
+"""
+
+@app.route('/api/films/<film_id>', methods=['GET'])
+def api_film_details(film_id):
+    film = mongo.db.films.find_one({"_id": ObjectId(film_id)})
+    if film:
+        response = requests.get(f'{API_URL}/movie/{film["tmdb_id"]}', params={'api_key': API_KEY})
+        film_details = response.json()
+        return jsonify(film_details), 200
+    else:
+        return jsonify({"message": "Film non trouvé"}), 404
 
 @app.route('/films/<film_id>/edit', methods=['GET', 'POST'])
 @login_required

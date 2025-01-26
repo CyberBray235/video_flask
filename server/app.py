@@ -41,6 +41,7 @@ def login():
         flash('Nom d\'utilisateur ou mot de passe invalide')
     return render_template('login.html')
 
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -91,7 +92,7 @@ def admin():
     films = list(mongo.db.films.find({"validated": {"$ne": True}}))
     return render_template('admin.html', users=users,rentals=rentals, films=films)
 
-
+"""
 #Enregistrement d'un user
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -109,6 +110,21 @@ def register():
         mongo.db.users.insert_one({'username': username, 'password': user.password, 'role': role})
         flash('Inscription Réussie. Veuillez vous connecter')
         return redirect(url_for('login'))
+    return render_template('register.html')
+"""
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        response = requests.post('http://api:5000/api/register', json={"username": username, "password": password})
+        if response.status_code == 201:
+            flash('Inscription Réussie. Veuillez vous connecter')
+            return redirect(url_for('login'))
+        else:
+            flash(response.json().get('message'))
+            return redirect(url_for('register'))
     return render_template('register.html')
 
 #On veut que l'admin puisse sup ou modifier un user
@@ -157,6 +173,14 @@ def index():
 @login_required
 def list_films():
     sort_by = request.args.get('sort_by', 'popularity.desc')
+    response = requests.get('http://api:5000/api/films')  # Assuming the `api` service is accessible at this URL
+    films = response.json()
+    return render_template('list_films.html', films=films, sort_by=sort_by)
+"""
+@app.route('/films', methods=['GET'])
+@login_required
+def list_films():
+    sort_by = request.args.get('sort_by', 'popularity.desc')
     print(f"Trie par: {sort_by}")
     response = requests.get(f'{API_URL}/discover/movie', params={'api_key': API_KEY, 'sort_by': sort_by})
     films = response.json().get('results', [])
@@ -177,7 +201,7 @@ def list_films():
         film['_id'] = str(film['_id'])
         film['id'] = film['_id']
     return render_template('list_films.html', films=custom_films, sort_by=sort_by)
-
+"""
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def recherche():
@@ -230,7 +254,7 @@ def add_film():
         new_film['_id'] = str(result.inserted_id)  # Ajoutez cette ligne pour obtenir l'ID généré
         return redirect(url_for('list_films'))
     return render_template('add_film.html')
-
+"""
 @app.route('/films/<film_id>', methods=['GET'])
 @login_required
 def film_details(film_id):
@@ -242,7 +266,18 @@ def film_details(film_id):
     else:
         flash('Pas de details pour ce film')
         return redirect(url_for('list_films'))
+"""
 
+@app.route('/films/<film_id>', methods=['GET'])
+@login_required
+def film_details(film_id):
+    response = requests.get(f'http://api:5000/api/films/{film_id}')
+    if response.status_code == 200:
+        film = response.json()
+        return render_template('film_details.html', film=film)
+    else:
+        flash('Pas de details pour ce film')
+        return redirect(url_for('list_films'))
 
 @app.route('/films/rent/<film_id>', methods=['POST'])
 @login_required
