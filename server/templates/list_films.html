@@ -2,22 +2,22 @@
 
 {% block content %}
 <h1 class="mb-4">Liste des films</h1>
+<form action="{{ url_for('list_films') }}" method="get" class="mb-4">
+    <div class="form-group">
+        <label for="sort_by">Trier par</label>
+        <select class="form-control" id="sort_by" name="sort_by">
+            <option value="popularity.desc" {% if sort_by == 'popularity.desc' %}selected{% endif %}>Popularité (+)</option>
+            <option value="popularity.asc" {% if sort_by == 'popularity.asc' %}selected{% endif %}>Popularité (-)</option>
+            <option value="release_date.desc" {% if sort_by == 'release_date.desc' %}selected{% endif %}>Date de sortie (descendant)</option>
+            <option value="release_date.asc" {% if sort_by == 'release_date.asc' %}selected{% endif %}>Date de sortie (ascendant)</option>
+            <option value="vote_average.desc" {% if sort_by == 'vote_average.desc' %}selected{% endif %}>Note (descendant)</option>
+            <option value="vote_average.asc" {% if sort_by == 'vote_average.asc' %}selected{% endif %}>Note (ascendant)</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Trier</button>
+</form>
 <div class="row">
     {% for film in films %}
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            {% if film.poster_path %}
-            <img src="https://image.tmdb.org/t/p/w500{{ film.poster_path }}" class="card-img-top" alt="{{ film.title }}">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ film.title }}</h5>
-                <p class="card-text">{{ film.overview }}</p>
-                <a href="{{ url_for('film_details', film_id=film.id) }}" class="btn btn-primary">Voir les détails</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-    {% for film in custom_films %}
     <div class="col-md-4 mb-4">
         <div class="card">
             {% if film.poster_path %}
@@ -26,10 +26,14 @@
             <div class="card-body">
                 <h5 class="card-title">{{ film.title }}</h5>
                 <p class="card-text">{{ film.overview }}</p>
-                <a href="{{ url_for('edit_film', film_id=film._id) }}" class="btn btn-primary">Modifier</a>
-                <form action="{{ url_for('delete_film', film_id=film._id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce film?')">Supprimer</button>
-                </form>
+                <div class="d-flex gap-2">
+                    <form action="{{ url_for('film_details', film_id=film._id) }}" method="GET">
+                        <button type="submit" class="btn btn-primary">Voir+</button>
+                    </form>
+                    <form action="{{ url_for('loca_film', film_id=film._id) }}" method="post">
+                        <button type="submit" class="btn btn-primary">Louer</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

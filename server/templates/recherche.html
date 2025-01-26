@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Rechercher un film parmi notre base</h1>
+    <form action="{{ url_for('recherche') }}" method="get">
+        <div class="form-group">
+            <label for="query">Titre du film</label>
+            <input type="text" class="form-control" id="query" name="query" placeholder="Entrez le titre du film ici">
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Recherche</button>
+    </form>
+</div>
+{% endblock %}

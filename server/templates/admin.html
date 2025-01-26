@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Bienvenue dans le tableau de bord admin </h1>
+    <h2>Locations en attente</h2>
+    <ul>
+        {% for rental in rentals %}
+        <li>
+            Location ID: {{ rental._id }}
+            <form action="{{ url_for('validation_pret', rental_id=rental._id) }}" method="post">
+                <button type="submit" class="btn btn-primary">Valider la location</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>Films en attente</h2>
+    <ul>
+        {% for film in films %}
+        <li>
+            Film ID: {{ film._id }} - {{ film.title }}
+            <form action="{{ url_for('validation_ajout_film', film_id=film._id) }}" method="post">
+                <button type="submit" class="btn btn-primary">Valider l'ajout</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

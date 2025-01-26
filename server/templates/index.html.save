@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %
+{% block content %}
 <body>
     <h1>Bienvenue à la vidéothèque</h1>
     <a href="/films">Voir les films</a> |

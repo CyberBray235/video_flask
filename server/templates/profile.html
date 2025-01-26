@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Profile de {{ user.username }}</h2>
+    <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
+    <p><strong>ID utilisateur :</strong> {{ user.id }}</p>
+    <h3>Films loués</h3>
+    <div class="row">
+        {% if rentals %}
+            {% for film in rentals %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ film.poster_path }}" class="card-img-top" alt="{{ film.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ film.title }}</h5>
+                            <p class="card-text">{{ film.overview }}</p>
+                            <form action="{{ url_for('resti_film', film_id=film._id) }}" method="post">
+                                <button type="submit" class="btn btn-secondary">Retourner</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun film loué.</p>
+        {% endif %}
+    </div>
+    <h3>Locations en attente de validation par l'admin</h3>
+    <div class="row">
+        {% if loca_en_attente %}
+            {% for rental in loca_en_attente %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ rental.poster_path }}" class="card-img-top" alt="{{ rental.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ rental.title }}</h5>
+                            <p class="card-text">{{ rental.overview }}</p>
+                            <p class="text-warning">En attente de validation</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Pas de location en attente de validation.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
