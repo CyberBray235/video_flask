@@ -332,5 +332,14 @@ def delete_film(film_id):
 def uploaded_file(filename):
     return send_from_directory('data/uploads', filename)
 
+@app.route('/health')
+def health_check():
+    try:
+        return {'status': 'healthy', 'service': 'api'}, 200
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e)}, 503
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
